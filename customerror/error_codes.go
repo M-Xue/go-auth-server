@@ -1,8 +1,10 @@
 package customerror
 
+type ServerErrorCode int
+
 const (
-	UserNotFoundErrorCode       = 101
-	InvalidCredentialsErrorCode = 102
-	ExistingEmailErrorCode      = 103
-	ExistingUsernameErrorCode   = 104
+	UserNotFoundErrorCode       ServerErrorCode = 101
+	InvalidCredentialsErrorCode ServerErrorCode = 102
+	ExistingEmailErrorCode      ServerErrorCode = 103
+	ExistingUsernameErrorCode   ServerErrorCode = 104
 )
