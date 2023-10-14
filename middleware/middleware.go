@@ -1,15 +1,12 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/M-Xue/go-auth-server/customerror"
 	"github.com/M-Xue/go-auth-server/entities/user"
 	"github.com/M-Xue/go-auth-server/server"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 )
 
@@ -28,33 +25,30 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 	}
 }
 
-// Source: https://pkg.go.dev/github.com/golang-jwt/jwt/v5#example-Parse-Hmac
+// TODO: check the tutorials errorResponse() function
 func AuthenticationMiddleware(server server.Server) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("auth")
 		if err != nil {
+			// TODO: err msg: authorization header is not provided
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-			}
-			return []byte(os.Getenv("JWT_HASH")), nil
-		})
-
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			userIdClaim := claims["userId"].(string)
-			user, err := user.GetUserById(server, userIdClaim)
-			if err != nil {
-				c.AbortWithStatus(http.StatusUnauthorized)
-			}
-			c.Set("user", user)
-		} else {
+		payload, err := server.AuthTokenFactory.VerifyAuthToken(tokenString)
+		if err != nil {
+			// TODO: err msg
 			c.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 
+		userIdClaim := payload.Username
+
+		user, err := user.GetUserById(server, userIdClaim)
+		if err != nil {
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+		c.Set("user", user)
 		c.Next()
 	}
 }
