@@ -5,10 +5,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/M-Xue/go-auth-server/entities/user"
-	"github.com/M-Xue/go-auth-server/server"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+
+	"github.com/M-Xue/go-auth-server/entities/user"
+	"github.com/M-Xue/go-auth-server/server"
 )
 
 func setJwtAuthenticationCookie(ctx *gin.Context, user *user.User) error {

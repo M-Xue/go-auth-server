@@ -1,4 +1,4 @@
-package customerror
+package clienterror
 
 type ServerErrorCode int
 

@@ -1,4 +1,4 @@
-package customerror
+package clienterror
 
 // ************************************************************************************************
 // * Server Request Errors
@@ -12,7 +12,13 @@ type ClientErrorResponse struct {
 	DebugId    string          `json:"debugId"`
 }
 
-func CreateClientErrorResponse(err error, msg string, statusCode int, errorCode ServerErrorCode, debugId string) ClientErrorResponse {
+func CreateClientErrorResponse(
+	err error,
+	msg string,
+	statusCode int,
+	errorCode ServerErrorCode,
+	debugId string,
+) ClientErrorResponse {
 	return ClientErrorResponse{
 		Error:      err,
 		Message:    msg,

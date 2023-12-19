@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/M-Xue/go-auth-server/customerror"
+	"github.com/M-Xue/go-auth-server/clienterror"
 	"github.com/M-Xue/go-auth-server/entities/user"
 	"github.com/M-Xue/go-auth-server/server"
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 		c.Next()
 		for _, err := range c.Errors {
 			switch e := err.Err.(type) {
-			case customerror.ClientError:
+			case clienterror.ClientError:
 				c.AbortWithStatusJSON(e.GetClientErrorResponse().StatusCode, e)
 			default:
 				uuid := uuid.New().String()

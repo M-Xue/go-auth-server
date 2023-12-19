@@ -39,7 +39,11 @@ func loadConfig() (*Config, error) {
 
 	accessTokenDuration, err := time.ParseDuration(accessTokenDurationString)
 	if err != nil {
-		return nil, fmt.Errorf("environment variable (%s) parsing error: %w", "ACCESS_TOKEN_DURATION", err)
+		return nil, fmt.Errorf(
+			"environment variable (%s) parsing error: %w",
+			"ACCESS_TOKEN_DURATION",
+			err,
+		)
 	}
 
 	clientUrl := os.Getenv("CLIENT_URL")

@@ -6,7 +6,14 @@ import (
 	"github.com/M-Xue/go-auth-server/server"
 )
 
-func UserSignUp(server server.Server, firstName string, lastName string, email string, username string, password string) (*User, error) {
+func UserSignUp(
+	server server.Server,
+	firstName string,
+	lastName string,
+	email string,
+	username string,
+	password string,
+) (*User, error) {
 	hashedPassword, err := hashPassword(password)
 	if err != nil {
 		return nil, err

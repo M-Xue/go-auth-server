@@ -6,8 +6,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/M-Xue/go-auth-server/token"
 	"github.com/gin-gonic/gin"
+
+	"github.com/M-Xue/go-auth-server/token"
 )
 
 type Server struct {

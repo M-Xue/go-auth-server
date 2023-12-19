@@ -4,15 +4,15 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/M-Xue/go-auth-server/middleware"
-	"github.com/M-Xue/go-auth-server/server"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	"github.com/M-Xue/go-auth-server/middleware"
+	"github.com/M-Xue/go-auth-server/server"
 )
 
 // Source: https://stackoverflow.com/questions/62608429/how-to-combine-group-of-routes-in-gin
 func AttachRoutes(server server.Server) {
-
 	// TODO: fix this
 	server.Router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{server.Config.ClientUrl},
