@@ -11,5 +11,8 @@ func main() {
 		panic(err)
 	}
 	routes.AttachRoutes(server)
-	server.Router.Run("localhost:8080")
+	err = server.Router.Run("localhost:8080")
+	if err != nil {
+		panic("Router could not be run")
+	}
 }

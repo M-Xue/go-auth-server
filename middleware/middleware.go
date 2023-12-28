@@ -1,13 +1,14 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 
-	"github.com/M-Xue/go-auth-server/clienterror"
-	"github.com/M-Xue/go-auth-server/entities/user"
-	"github.com/M-Xue/go-auth-server/server"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+
+	"github.com/M-Xue/go-auth-server/clienterror"
+	"github.com/M-Xue/go-auth-server/server"
 )
 
 func ErrorHandlerMiddleware() gin.HandlerFunc {
@@ -25,7 +26,7 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 	}
 }
 
-// TODO: check the tutorials errorResponse() function
+// // TODO: check the tutorials errorResponse() function
 func AuthenticationMiddleware(server server.Server) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("auth")
@@ -35,16 +36,16 @@ func AuthenticationMiddleware(server server.Server) gin.HandlerFunc {
 			return
 		}
 
-		payload, err := server.AuthTokenFactory.VerifyAuthToken(tokenString)
+		payload, err := server.AuthTokenFactory.VerifyAndParseAuthToken(tokenString)
 		if err != nil {
 			// TODO: err msg
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
-		userIdClaim := payload.Username
+		userIdClaim := payload.TokenID
 
-		user, err := user.GetUserById(server, userIdClaim)
+		user, err := server.DbStore.GetUserByID(context.Background(), userIdClaim)
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}

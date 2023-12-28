@@ -3,18 +3,18 @@ package routes
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+
 	"github.com/M-Xue/go-auth-server/entities/user"
 	"github.com/M-Xue/go-auth-server/server"
-	"github.com/gin-gonic/gin"
 )
 
 func userRoutes(server server.Server, rootGroup *gin.RouterGroup) {
 	userRouter := rootGroup.Group("/user")
 	{
-		userRouter.POST("/", handleUserSignUp(server))
-		userRouter.POST("/auth/email", handleIsEmailAvailable(server))
-		userRouter.POST("/auth/username", handleIsUsernameAvailable(server))
-		userRouter.POST("/auth/login", handleUserLogin(server))
+		userRouter.POST("/auth/signup", handleUserSignUp(server))
+		userRouter.POST("/auth/login", handleUserLogIn(server))
 	}
 }
 
@@ -24,18 +24,18 @@ func userRoutes(server server.Server, rootGroup *gin.RouterGroup) {
 
 func handleUserSignUp(server server.Server) gin.HandlerFunc {
 	type request struct {
-		FirstName string `json:"firstName"`
-		LastName  string `json:"lastName"`
 		Email     string `json:"email"`
 		Username  string `json:"username"`
+		FirstName string `json:"firstName"`
+		LastName  string `json:"lastName"`
 		Password  string `json:"password"`
 	}
 	type response struct {
-		ID        string `json:"id"`
-		FirstName string `json:"firstName"`
-		LastName  string `json:"lastName"`
-		Email     string `json:"email"`
-		Username  string `json:"username"`
+		ID        uuid.UUID `json:"id"`
+		Email     string    `json:"email"`
+		Username  string    `json:"username"`
+		FirstName string    `json:"firstName"`
+		LastName  string    `json:"lastName"`
 	}
 	handler := func(ctx *gin.Context) {
 		var req request
@@ -43,7 +43,7 @@ func handleUserSignUp(server server.Server) gin.HandlerFunc {
 			return
 		}
 
-		newUser, err := user.UserSignUp(
+		newUser, err := user.SignUp(
 			server,
 			req.FirstName,
 			req.LastName,
@@ -56,7 +56,7 @@ func handleUserSignUp(server server.Server) gin.HandlerFunc {
 			return
 		}
 
-		err = setJwtAuthenticationCookie(ctx, newUser)
+		err = setAuthTokenCookie(ctx, server, newUser.ID)
 		if err != nil {
 			ctx.Error(err)
 			return
@@ -64,41 +64,42 @@ func handleUserSignUp(server server.Server) gin.HandlerFunc {
 
 		res := response{
 			ID:        newUser.ID,
-			FirstName: newUser.FirstName,
-			LastName:  newUser.LastName,
 			Email:     newUser.Email,
 			Username:  newUser.Username,
+			FirstName: newUser.FirstName,
+			LastName:  newUser.LastName,
 		}
 		ctx.JSON(http.StatusOK, res)
 	}
 	return handler
 }
 
-func handleUserLogin(server server.Server) gin.HandlerFunc {
+func handleUserLogIn(server server.Server) gin.HandlerFunc {
 	type request struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 	type response struct {
-		ID        string `json:"id"`
-		FirstName string `json:"firstName"`
-		LastName  string `json:"lastName"`
-		Email     string `json:"email"`
-		Username  string `json:"username"`
+		ID        uuid.UUID `json:"id"`
+		FirstName string    `json:"firstName"`
+		LastName  string    `json:"lastName"`
+		Email     string    `json:"email"`
+		Username  string    `json:"username"`
 	}
 	handler := func(ctx *gin.Context) {
 		var req request
 		if err := ctx.BindJSON(&req); err != nil {
 			return
 		}
-		loggedInUser, err := user.UserLogin(server, req.Email, req.Password)
+		loggedInUser, err := user.LogIn(server, req.Email, req.Password)
 		if err != nil {
 			ctx.Error(err)
 			return
 		}
 
-		err = setJwtAuthenticationCookie(ctx, loggedInUser)
+		err = setAuthTokenCookie(ctx, server, loggedInUser.ID)
 		if err != nil {
+			// TODO fix if this error is the correct way to throw this err
 			ctx.Error(err)
 			return
 		}
@@ -109,60 +110,6 @@ func handleUserLogin(server server.Server) gin.HandlerFunc {
 			LastName:  loggedInUser.LastName,
 			Email:     loggedInUser.Email,
 			Username:  loggedInUser.Username,
-		}
-		ctx.JSON(http.StatusOK, res)
-	}
-	return handler
-}
-
-func handleIsEmailAvailable(server server.Server) gin.HandlerFunc {
-	type request struct {
-		Email string `json:"email"`
-	}
-	type response struct {
-		IsEmailAvailable bool `json:"isEmailAvailable"`
-	}
-	handler := func(ctx *gin.Context) {
-		var req request
-		if err := ctx.BindJSON(&req); err != nil {
-			return
-		}
-
-		isEmailAvail, err := user.UserIsEmailAvailable(server, req.Email)
-		if err != nil {
-			ctx.Error(err)
-			return
-		}
-
-		res := response{
-			IsEmailAvailable: isEmailAvail,
-		}
-		ctx.JSON(http.StatusOK, res)
-	}
-	return handler
-}
-
-func handleIsUsernameAvailable(server server.Server) gin.HandlerFunc {
-	type request struct {
-		Username string `json:"username"`
-	}
-	type response struct {
-		IsUsernameAvailable bool `json:"isUsernameAvailable"`
-	}
-	handler := func(ctx *gin.Context) {
-		var req request
-		if err := ctx.BindJSON(&req); err != nil {
-			return
-		}
-
-		isUsernameAvail, err := user.UserIsUsernameAvailable(server, req.Username)
-		if err != nil {
-			ctx.Error(err)
-			return
-		}
-
-		res := response{
-			IsUsernameAvailable: isUsernameAvail,
 		}
 		ctx.JSON(http.StatusOK, res)
 	}

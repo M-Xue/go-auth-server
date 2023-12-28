@@ -1,49 +1,40 @@
 package server
 
 import (
-	"database/sql"
-	"fmt"
-	"log"
-	"time"
-
 	"github.com/gin-gonic/gin"
 
-	"github.com/M-Xue/go-auth-server/token"
+	"github.com/M-Xue/go-auth-server/auth"
+	db "github.com/M-Xue/go-auth-server/db/sqlc"
 )
 
 type Server struct {
-	DbConn           *sql.DB
+	DbStore          *db.Store
 	Router           *gin.Engine
-	AuthTokenFactory token.Factory
-	Config           *Config
+	Config           Config
+	AuthTokenFactory auth.TokenFactory
 }
 
 func InitServer() (Server, error) {
-	serverConfig, err := loadConfig()
+	serverConfig, err := initConfig()
 	if err != nil {
 		return Server{}, err
 	}
 
-	dbURL := serverConfig.DbUrl
-	db, err := sql.Open("mysql", dbURL)
+	dbStore, err := initDatabase(serverConfig.DbUrl)
 	if err != nil {
-		log.Fatal(err)
+		return Server{}, err
 	}
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
-	defer db.Close()
 
-	authTokenFactory, err := token.NewPasetoFactory(serverConfig.TokenSymmetricKey)
+	tokenFactory, err := auth.NewPasetoFactory(serverConfig.TokenSymmetricKey)
 	if err != nil {
-		return Server{}, fmt.Errorf("cannot create auth token factory: %w", err)
+		return Server{}, err
 	}
 
 	server := Server{
-		DbConn:           db,
+		DbStore:          dbStore,
 		Router:           gin.Default(),
-		AuthTokenFactory: authTokenFactory,
 		Config:           serverConfig,
+		AuthTokenFactory: tokenFactory,
 	}
 
 	return server, nil
