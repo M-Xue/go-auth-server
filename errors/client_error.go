@@ -1,15 +1,15 @@
-package clienterror
+package errors
 
 // ************************************************************************************************
 // * Server Request Errors
 // ************************************************************************************************
 
 type ClientErrorResponse struct {
-	Error      error           `json:"-"`
-	Message    string          `json:"message"`
-	StatusCode int             `json:"-"`
-	ErrorCode  ServerErrorCode `json:"errorCode"`
-	DebugId    string          `json:"debugId"`
+	Error         error           `json:"-"`
+	ClientMessage string          `json:"message"`
+	StatusCode    int             `json:"-"`
+	ErrorCode     ServerErrorCode `json:"errorCode"`
+	DebugId       string          `json:"debugId"`
 }
 
 func CreateClientErrorResponse(
@@ -20,11 +20,11 @@ func CreateClientErrorResponse(
 	debugId string,
 ) ClientErrorResponse {
 	return ClientErrorResponse{
-		Error:      err,
-		Message:    msg,
-		StatusCode: statusCode,
-		ErrorCode:  errorCode,
-		DebugId:    debugId,
+		Error:         err,
+		ClientMessage: msg,
+		StatusCode:    statusCode,
+		ErrorCode:     errorCode,
+		DebugId:       debugId,
 	}
 }
 

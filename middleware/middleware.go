@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"github.com/M-Xue/go-auth-server/clienterror"
+	"github.com/M-Xue/go-auth-server/errors"
 	"github.com/M-Xue/go-auth-server/server"
 )
 
@@ -16,7 +16,7 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 		c.Next()
 		for _, err := range c.Errors {
 			switch e := err.Err.(type) {
-			case clienterror.ClientError:
+			case errors.ClientError:
 				c.AbortWithStatusJSON(e.GetClientErrorResponse().StatusCode, e)
 			default:
 				uuid := uuid.New().String()

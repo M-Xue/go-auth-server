@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
-	clienterror "github.com/M-Xue/go-auth-server/clienterror"
+	"github.com/M-Xue/go-auth-server/errors"
 )
 
 type UserNotFoundError struct{}
@@ -14,12 +14,12 @@ func (e *UserNotFoundError) Error() string {
 	return "user not found"
 }
 
-func (e *UserNotFoundError) GetClientErrorResponse() clienterror.ClientErrorResponse {
-	return clienterror.CreateClientErrorResponse(
+func (e *UserNotFoundError) GetClientErrorResponse() errors.ClientErrorResponse {
+	return errors.CreateClientErrorResponse(
 		e,
 		e.Error(),
 		http.StatusNotFound,
-		clienterror.UserNotFoundErrorCode,
+		errors.UserNotFound,
 		uuid.New().String(),
 	)
 }
@@ -30,12 +30,12 @@ func (e *InvalidCredentialsError) Error() string {
 	return "invalid credentials"
 }
 
-func (e *InvalidCredentialsError) GetClientErrorResponse() clienterror.ClientErrorResponse {
-	return clienterror.CreateClientErrorResponse(
+func (e *InvalidCredentialsError) GetClientErrorResponse() errors.ClientErrorResponse {
+	return errors.CreateClientErrorResponse(
 		e,
 		e.Error(),
 		http.StatusUnauthorized,
-		clienterror.InvalidCredentialsErrorCode,
+		errors.InvalidCredentials,
 		uuid.New().String(),
 	)
 }
@@ -46,12 +46,12 @@ func (e *ExistingEmailError) Error() string {
 	return "email already exists"
 }
 
-func (e *ExistingEmailError) GetClientErrorResponse() clienterror.ClientErrorResponse {
-	return clienterror.CreateClientErrorResponse(
+func (e *ExistingEmailError) GetClientErrorResponse() errors.ClientErrorResponse {
+	return errors.CreateClientErrorResponse(
 		e,
 		e.Error(),
 		http.StatusConflict,
-		clienterror.ExistingEmailErrorCode,
+		errors.ExistingEmail,
 		uuid.New().String(),
 	)
 }
@@ -62,12 +62,12 @@ func (e *ExistingUsernameError) Error() string {
 	return "username already exists"
 }
 
-func (e *ExistingUsernameError) GetClientErrorResponse() clienterror.ClientErrorResponse {
-	return clienterror.CreateClientErrorResponse(
+func (e *ExistingUsernameError) GetClientErrorResponse() errors.ClientErrorResponse {
+	return errors.CreateClientErrorResponse(
 		e,
 		e.Error(),
 		http.StatusConflict,
-		clienterror.ExistingUsernameErrorCode,
+		errors.ExistingUsername,
 		uuid.New().String(),
 	)
 }
