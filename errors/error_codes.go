@@ -7,4 +7,6 @@ const (
 	InvalidCredentials ServerErrorCode = 102
 	ExistingEmail      ServerErrorCode = 103
 	ExistingUsername   ServerErrorCode = 104
+
+	InternalServiceError ServerErrorCode = 200
 )
