@@ -27,7 +27,7 @@ func (factory PasetoFactory) CreateAuthToken(
 }
 
 func (factory PasetoFactory) VerifyAndParseAuthToken(token string) (AuthTokenPayload, error) {
-	payload := AuthTokenPayload{}
+	payload := &AuthTokenPayload{}
 	err := factory.paseto.Decrypt(token, factory.symmetricKey, payload, nil)
 	if err != nil {
 		return AuthTokenPayload{}, ErrInvalidToken
@@ -38,7 +38,7 @@ func (factory PasetoFactory) VerifyAndParseAuthToken(token string) (AuthTokenPay
 		return AuthTokenPayload{}, err
 	}
 
-	return payload, nil
+	return *payload, nil
 }
 
 func NewPasetoFactory(symmetricKey string) (TokenFactory, error) {
