@@ -6,51 +6,44 @@ import (
 )
 
 type ErrorMetadata struct {
-	ErrorCode ServerErrorCode
-	DebugId   uuid.UUID
-}
-
-type ErrorClientResponseData struct {
-	StatusCode    int
-	ClientMessage string
+	DebugId         uuid.UUID
+	ServerErrorCode ServerErrorCode
+	HttpStatusCode  int
+	ClientMessage   string
 }
 
 type StackTraceError = *goerr.Error
 
 type ServerError struct {
 	ErrorMetadata
-	ErrorClientResponseData
-	StackTraceError // Use goerror.Wrap is there is underlying error, else use goerr.Errorf
+	StackTraceError // Use goerror.Wrap if there is underlying error, else use goerr.Errorf
 }
 
 type ClientErrorResponse struct {
-	DebugId       uuid.UUID `json:"debug_id"`
-	StatusCode    int       `json:"-"`
-	ClientMessage string    `json:"message"`
+	DebugId         uuid.UUID       `json:"debug_id"`
+	ServerErrorCode ServerErrorCode `json:"error_code`
+	HttpStatusCode  int             `json:"-"`
+	ClientMessage   string          `json:"message"`
 }
 
 func (err ServerError) GetClientErrorResponse() ClientErrorResponse {
 	return ClientErrorResponse{
-		DebugId:       err.DebugId,
-		StatusCode:    err.StatusCode,
-		ClientMessage: err.ClientMessage,
+		DebugId:         err.DebugId,
+		ServerErrorCode: err.ServerErrorCode,
+		HttpStatusCode:  err.HttpStatusCode,
+		ClientMessage:   err.ClientMessage,
 	}
 }
 
-// what do i want
-// i want all my errors to inherit from the go-error class
+func (err ServerError) Is(target error) bool {
+	_, ok := target.(ServerError)
+	return ok
+}
 
-// I want it to already have the stack trace attached to it
-// i want to be able to use as and is
-// i want it to return a client error response
-// I want it to have internal server metadata like internal server error codes
-
-// I want structs holding the servererror to be errors themselves so i can use Is on them
-// I want to be able to use Is on nested errors within these
-
-// i think i need a new type for this??
-
-// inheritance of classes (structs)
-// interface inheritance
-// default methods
-// multi inheritance
+func (err ServerError) As(target interface{}) bool {
+	serverError, ok := target.(*ServerError)
+	if ok {
+		*serverError = err
+	}
+	return ok
+}

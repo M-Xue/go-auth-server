@@ -13,19 +13,15 @@ type UserNotFoundError struct {
 
 func NewUserNotFoundError() UserNotFoundError {
 	errMetadata := ErrorMetadata{
-		ErrorCode: UserNotFound,
-		DebugId:   uuid.New(),
-	}
-
-	errClientRes := ErrorClientResponseData{
-		StatusCode:    http.StatusNotFound,
-		ClientMessage: "User not found",
+		ServerErrorCode: UserNotFound,
+		DebugId:         uuid.New(),
+		HttpStatusCode:  http.StatusNotFound,
+		ClientMessage:   "User not found",
 	}
 
 	serverErr := ServerError{
-		ErrorMetadata:           errMetadata,
-		ErrorClientResponseData: errClientRes,
-		StackTraceError:         goerr.Errorf("user not found"),
+		ErrorMetadata:   errMetadata,
+		StackTraceError: goerr.Errorf("user not found"),
 	}
 
 	return UserNotFoundError{serverErr}
@@ -37,19 +33,15 @@ type InvalidCredentialsError struct {
 
 func NewInvalidCredentialsError() InvalidCredentialsError {
 	errMetadata := ErrorMetadata{
-		ErrorCode: InvalidCredentials,
-		DebugId:   uuid.New(),
-	}
-
-	errClientRes := ErrorClientResponseData{
-		StatusCode:    http.StatusUnauthorized,
-		ClientMessage: "Invalid credentials",
+		ServerErrorCode: InvalidCredentials,
+		DebugId:         uuid.New(),
+		HttpStatusCode:  http.StatusUnauthorized,
+		ClientMessage:   "Invalid credentials",
 	}
 
 	serverErr := ServerError{
-		ErrorMetadata:           errMetadata,
-		ErrorClientResponseData: errClientRes,
-		StackTraceError:         goerr.Errorf("invalid credentials"),
+		ErrorMetadata:   errMetadata,
+		StackTraceError: goerr.Errorf("invalid credentials"),
 	}
 
 	return InvalidCredentialsError{serverErr}
@@ -61,19 +53,15 @@ type ExistingEmailError struct {
 
 func NewExistingEmailError() ExistingEmailError {
 	errMetadata := ErrorMetadata{
-		ErrorCode: ExistingEmail,
-		DebugId:   uuid.New(),
-	}
-
-	errClientRes := ErrorClientResponseData{
-		StatusCode:    http.StatusConflict,
-		ClientMessage: "Email already exists",
+		ServerErrorCode: ExistingEmail,
+		DebugId:         uuid.New(),
+		HttpStatusCode:  http.StatusConflict,
+		ClientMessage:   "Email already exists",
 	}
 
 	serverErr := ServerError{
-		ErrorMetadata:           errMetadata,
-		ErrorClientResponseData: errClientRes,
-		StackTraceError:         goerr.Errorf("email already exists"),
+		ErrorMetadata:   errMetadata,
+		StackTraceError: goerr.Errorf("email already exists"),
 	}
 
 	return ExistingEmailError{serverErr}
@@ -85,19 +73,15 @@ type ExistingUsernameError struct {
 
 func NewExistingUsernameError() ExistingUsernameError {
 	errMetadata := ErrorMetadata{
-		ErrorCode: ExistingUsername,
-		DebugId:   uuid.New(),
-	}
-
-	errClientRes := ErrorClientResponseData{
-		StatusCode:    http.StatusConflict,
-		ClientMessage: "Username already exists",
+		ServerErrorCode: ExistingUsername,
+		DebugId:         uuid.New(),
+		HttpStatusCode:  http.StatusConflict,
+		ClientMessage:   "Username already exists",
 	}
 
 	serverErr := ServerError{
-		ErrorMetadata:           errMetadata,
-		ErrorClientResponseData: errClientRes,
-		StackTraceError:         goerr.Errorf("username already exists"),
+		ErrorMetadata:   errMetadata,
+		StackTraceError: goerr.Errorf("username already exists"),
 	}
 
 	return ExistingUsernameError{serverErr}

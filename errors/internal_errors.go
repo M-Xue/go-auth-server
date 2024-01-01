@@ -13,19 +13,15 @@ type InternalError struct {
 
 func NewInternalServiceError(err error) InternalError {
 	errMetadata := ErrorMetadata{
-		ErrorCode: InternalServiceError,
-		DebugId:   uuid.New(),
-	}
-
-	errClientRes := ErrorClientResponseData{
-		StatusCode:    http.StatusInternalServerError,
-		ClientMessage: "Something went wrong on the server",
+		ServerErrorCode: InternalServiceError,
+		DebugId:         uuid.New(),
+		HttpStatusCode:  http.StatusInternalServerError,
+		ClientMessage:   "Something went wrong on the server",
 	}
 
 	serverErr := ServerError{
-		ErrorMetadata:           errMetadata,
-		ErrorClientResponseData: errClientRes,
-		StackTraceError:         goerr.WrapPrefix(err, "Internal service error:", 0),
+		ErrorMetadata:   errMetadata,
+		StackTraceError: goerr.WrapPrefix(err, "Internal service error:", 0),
 	}
 
 	return InternalError{serverErr}

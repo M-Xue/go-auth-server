@@ -16,8 +16,9 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 		c.Next()
 		for _, err := range c.Errors {
 			switch e := err.Err.(type) {
-			case errors.ClientError:
-				c.AbortWithStatusJSON(e.GetClientErrorResponse().StatusCode, e)
+			case errors.InternalError:
+				// TODO add logging here
+				c.AbortWithStatusJSON(e.GetClientErrorResponse().HttpStatusCode, e)
 			default:
 				uuid := uuid.New().String()
 				c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{"debugId": uuid})
