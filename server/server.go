@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 
 	"github.com/M-Xue/go-auth-server/auth"
 	db "github.com/M-Xue/go-auth-server/db/sqlc"
@@ -12,6 +13,7 @@ type Server struct {
 	Router           *gin.Engine
 	Config           Config
 	AuthTokenFactory auth.TokenFactory
+	Logger           zerolog.Logger
 }
 
 func InitServer() (Server, error) {

@@ -3,6 +3,7 @@ package errors
 import (
 	goerr "github.com/go-errors/errors"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 )
 
 type ErrorMetadata struct {
@@ -10,6 +11,7 @@ type ErrorMetadata struct {
 	ServerErrorCode ServerErrorCode
 	HttpStatusCode  int
 	ClientMessage   string
+	LogLevel        zerolog.Level
 }
 
 type StackTraceError = *goerr.Error

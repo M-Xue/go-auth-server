@@ -12,6 +12,7 @@ type Config struct {
 	ClientUrl         string
 	TokenSymmetricKey string
 	AccessDuration    string
+	Environment       string
 }
 
 func envError(envName string) error {
@@ -43,11 +44,19 @@ func initConfig() (Config, error) {
 	if accessDuration == "" {
 		return Config{}, envError("ACCESS_DURATION")
 	}
+	environment := os.Getenv("ENVIRONMENT")
+	if environment == "" {
+		return Config{}, envError("ENVIRONMENT")
+	}
+	if environment != "production" && environment != "development" {
+		return Config{}, fmt.Errorf("environment value invlid")
+	}
 
 	return Config{
 		ClientUrl:         clientUrl,
 		DbUrl:             dbUrl,
 		TokenSymmetricKey: tokenSymmetricKey,
 		AccessDuration:    accessDuration,
+		Environment:       environment,
 	}, nil
 }

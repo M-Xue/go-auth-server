@@ -5,6 +5,7 @@ import (
 
 	goerr "github.com/go-errors/errors"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 )
 
 type UserNotFoundError struct {
@@ -17,6 +18,7 @@ func NewUserNotFoundError() UserNotFoundError {
 		DebugId:         uuid.New(),
 		HttpStatusCode:  http.StatusNotFound,
 		ClientMessage:   "User not found",
+		LogLevel:        zerolog.InfoLevel,
 	}
 
 	serverErr := ServerError{
@@ -37,6 +39,7 @@ func NewInvalidCredentialsError() InvalidCredentialsError {
 		DebugId:         uuid.New(),
 		HttpStatusCode:  http.StatusUnauthorized,
 		ClientMessage:   "Invalid credentials",
+		LogLevel:        zerolog.InfoLevel,
 	}
 
 	serverErr := ServerError{
@@ -57,6 +60,7 @@ func NewExistingEmailError() ExistingEmailError {
 		DebugId:         uuid.New(),
 		HttpStatusCode:  http.StatusConflict,
 		ClientMessage:   "Email already exists",
+		LogLevel:        zerolog.InfoLevel,
 	}
 
 	serverErr := ServerError{
@@ -77,6 +81,7 @@ func NewExistingUsernameError() ExistingUsernameError {
 		DebugId:         uuid.New(),
 		HttpStatusCode:  http.StatusConflict,
 		ClientMessage:   "Username already exists",
+		LogLevel:        zerolog.InfoLevel,
 	}
 
 	serverErr := ServerError{
