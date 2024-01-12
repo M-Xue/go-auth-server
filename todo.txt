@@ -1,0 +1,31 @@
+fix middleware (all of them lol)
+- unit test them??
+// TODO set up loggin with sqlc. im pre sure there is a way to use sqlc with zerolog
+figure out database errors
+write tests for user api
+clean up errors
+delete the foo protected route in root route
+fix todos
+access token
+
+
+Do middleware
+- https://github.com/gin-gonic/gin/issues/665
+
+figure out go context and routines
+
+youtube videos
+fix up errors
+sqlc
+
+
+learn about context and go routines
+
+next week:
+fix nvim for go????
+
+look into nvim for webdev???
+
+
+learn typescript?
+

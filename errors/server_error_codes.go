@@ -8,5 +8,6 @@ const (
 	ExistingEmail      ServerErrorCode = 103
 	ExistingUsername   ServerErrorCode = 104
 
-	InternalServiceError ServerErrorCode = 200
+	InternalServiceError         ServerErrorCode = 200
+	UncaughtInternalServiceError ServerErrorCode = 201
 )

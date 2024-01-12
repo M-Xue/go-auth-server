@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"github.com/M-Xue/go-auth-server/entities/user"
+	"github.com/M-Xue/go-auth-server/api"
 	"github.com/M-Xue/go-auth-server/server"
 )
 
@@ -43,7 +43,7 @@ func handleUserSignUp(server server.Server) gin.HandlerFunc {
 			return
 		}
 
-		newUser, err := user.SignUp(
+		newUser, err := api.SignUp(
 			server,
 			req.FirstName,
 			req.LastName,
@@ -91,7 +91,7 @@ func handleUserLogIn(server server.Server) gin.HandlerFunc {
 		if err := ctx.BindJSON(&req); err != nil {
 			return
 		}
-		loggedInUser, err := user.LogIn(server, req.Email, req.Password)
+		loggedInUser, err := api.LogIn(server, req.Email, req.Password)
 		if err != nil {
 			ctx.Error(err)
 			return

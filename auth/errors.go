@@ -5,6 +5,6 @@ import (
 )
 
 var (
-	ErrInvalidToken = errors.New("token is invalid")
-	ErrExpiredToken = errors.New("token has expired")
+	ErrInvalidToken = errors.New("authentication token is invalid")
+	ErrExpiredToken = errors.New("authentication token has expired")
 )

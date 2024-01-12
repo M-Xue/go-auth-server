@@ -10,13 +10,22 @@ import (
 
 // Guide for zerolog: https://betterstack.com/community/guides/logging/zerolog/
 func initLogger(environment string) (zerolog.Logger, error) {
-	// TODO set up loggin with sqlc. im pre sure there is a way to use sqlc with zerolog
-
 	var logger zerolog.Logger
 	switch environment {
 	case "development":
+		file, err := os.OpenFile(
+			"server.log",
+			os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+			0664,
+		)
+		if err != nil {
+			panic(err)
+		}
+
+		defer file.Close()
+
 		consoleWriter := zerolog.ConsoleWriter{
-			Out:        os.Stderr,
+			Out:        file,
 			TimeFormat: time.RFC3339,
 			FormatMessage: func(i interface{}) string {
 				return fmt.Sprintf("| %s |", i)

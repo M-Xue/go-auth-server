@@ -22,7 +22,7 @@ func (payload AuthTokenPayload) Valid() error {
 
 func NewPayload(userID uuid.UUID, duration time.Duration) (AuthTokenPayload, error) {
 	tokenID, err := uuid.NewRandom()
-	if err != nil { // TODO: fix this error handling to match systems error handling
+	if err != nil {
 		return AuthTokenPayload{}, err
 	}
 

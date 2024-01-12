@@ -40,9 +40,9 @@ func initConfig() (Config, error) {
 		return Config{}, envError("TOKEN_SYMMETRIC_KEY")
 	}
 
-	accessDuration := os.Getenv("ACCESS_DURATION")
+	accessDuration := os.Getenv("ACCESS_TOKEN_DURATION")
 	if accessDuration == "" {
-		return Config{}, envError("ACCESS_DURATION")
+		return Config{}, envError("ACCESS_TOKEN_DURATION")
 	}
 	environment := os.Getenv("ENVIRONMENT")
 	if environment == "" {
