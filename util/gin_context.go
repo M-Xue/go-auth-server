@@ -24,8 +24,6 @@ func GetUserUUIDFromGinContext(c *gin.Context) (uuid.UUID, error) {
 	}
 }
 
-// TODO add request id to all requests. This is attatched to all requests but the debug id only gets added for errors
-
 func GetRequestUUIDFromGinContext(c *gin.Context) (uuid.UUID, error) {
 	if requestID, exists := c.Get(RequestIDGinContextKey); exists {
 		if requestUUID, ok := requestID.(uuid.UUID); ok {

@@ -14,7 +14,6 @@ func initDatabase(dbURL string) (*db.Store, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to create connection pool: %v", err)
 	}
-	defer dbpool.Close()
 
 	return db.NewStore(dbpool), nil
 }

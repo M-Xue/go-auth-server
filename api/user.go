@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/rs/zerolog"
 
 	"github.com/M-Xue/go-auth-server/db"
@@ -33,9 +34,13 @@ func SignUp(
 	}
 	newUser, err := server.DbStore.CreateUser(context.Background(), createUserArg)
 	if err != nil {
-		if db.GetDbErrorCode(err) == db.UniqueViolation {
-			// TODO figureout what the message is
-			return nil, errors.NewExistingUsernameError()
+		pgerr, ok := err.(*pgconn.PgError)
+		if ok && pgerr.Code == db.UniqueViolation {
+			if pgerr.ConstraintName == "users_username_key" {
+				return nil, errors.NewExistingUsernameError()
+			} else if pgerr.ConstraintName == "users_email_key" {
+				return nil, errors.NewExistingEmailError()
+			}
 		}
 		return nil, errors.NewInternalServiceError(err, zerolog.ErrorLevel)
 	}

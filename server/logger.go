@@ -22,8 +22,6 @@ func initLogger(environment string) (zerolog.Logger, error) {
 			panic(err)
 		}
 
-		defer file.Close()
-
 		consoleWriter := zerolog.ConsoleWriter{
 			Out:        file,
 			TimeFormat: time.RFC3339,
