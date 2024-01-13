@@ -8,22 +8,23 @@ import (
 	"github.com/M-Xue/go-auth-server/errors"
 	"github.com/M-Xue/go-auth-server/server"
 	"github.com/M-Xue/go-auth-server/util"
+	goerr "github.com/go-errors/errors"
 )
 
 func ErrorHandlerMiddleware(logger zerolog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 		for _, err := range c.Errors {
-			e, ok := err.Err.(errors.InternalError)
-			if ok {
-				util.LogInternalError(c, logger, e)
+			e := &errors.ServerError{}
+			if goerr.As(err, e) {
+				util.LogError(c, logger, *e)
 				c.AbortWithStatusJSON(
 					e.GetClientErrorResponse().HttpStatusCode,
 					e.GetClientErrorResponse(),
 				)
 			} else {
-				uncaughtError := errors.NewUncaughtInternalServiceError(e, zerolog.ErrorLevel)
-				util.LogInternalError(c, logger, uncaughtError)
+				uncaughtError := errors.NewUncaughtInternalServiceError(err, zerolog.ErrorLevel)
+				util.LogError(c, logger, uncaughtError.ServerError)
 				c.AbortWithStatusJSON(uncaughtError.GetClientErrorResponse().HttpStatusCode, uncaughtError.GetClientErrorResponse())
 			}
 

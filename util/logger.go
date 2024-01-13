@@ -9,10 +9,10 @@ import (
 	"github.com/M-Xue/go-auth-server/errors"
 )
 
-func LogInternalError(
+func LogError(
 	c *gin.Context,
 	logger zerolog.Logger,
-	e errors.InternalError,
+	e errors.ServerError,
 ) {
 	userIDString := ""
 	userUUID, err := GetUserUUIDFromGinContext(c)
