@@ -1,9 +1,11 @@
 package routes
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 
 	"github.com/M-Xue/go-auth-server/middleware"
 	"github.com/M-Xue/go-auth-server/server"
@@ -24,15 +26,16 @@ func AttachRoutes(server server.Server) {
 		MaxAge: 12 * time.Hour,
 	}))
 
+	server.Router.Use(middleware.SetRequestIdMiddleware())
 	server.Router.Use(middleware.ErrorHandlerMiddleware(server.Logger))
 	rootGroup := server.Router.Group("/api/v1")
 
 	userRoutes(server, rootGroup)
 
-	// protectedRouter := rootGroup.Group("/").Use(middleware.AuthenticationMiddleware(server))
-	// protectedRouter.GET("/secret", func(ctx *gin.Context) {
-	// 	ctx.JSON(http.StatusOK, gin.H{
-	// 		"secret": "Foo 42",
-	// 	})
-	// })
+	protectedRouter := rootGroup.Group("/").Use(middleware.AuthenticationMiddleware(server))
+	protectedRouter.GET("/secret", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"secret": "Foo 42",
+		})
+	})
 }

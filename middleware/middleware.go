@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 
 	"github.com/M-Xue/go-auth-server/errors"
@@ -27,6 +28,14 @@ func ErrorHandlerMiddleware(logger zerolog.Logger) gin.HandlerFunc {
 			}
 
 		}
+	}
+}
+
+func SetRequestIdMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		requestId := uuid.New()
+		c.Set(util.RequestIDGinContextKey, requestId)
+		c.Next()
 	}
 }
 

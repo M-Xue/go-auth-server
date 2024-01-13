@@ -23,7 +23,7 @@ type ServerError struct {
 
 type ClientErrorResponse struct {
 	DebugId         uuid.UUID       `json:"debug_id"`
-	ServerErrorCode ServerErrorCode `json:"error_code`
+	ServerErrorCode ServerErrorCode `json:"-"`
 	HttpStatusCode  int             `json:"-"`
 	ClientMessage   string          `json:"message"`
 }
