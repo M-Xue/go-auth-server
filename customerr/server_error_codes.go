@@ -1,4 +1,4 @@
-package errors
+package customerr
 
 type ServerErrorCode int
 

@@ -3,13 +3,15 @@ package api
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/rs/zerolog"
 
+	"github.com/M-Xue/go-auth-server/customerr"
 	"github.com/M-Xue/go-auth-server/db"
 	sqlc "github.com/M-Xue/go-auth-server/db/sqlc"
-	"github.com/M-Xue/go-auth-server/errors"
 	"github.com/M-Xue/go-auth-server/server"
+	"github.com/go-errors/errors"
 )
 
 func SignUp(
@@ -22,7 +24,7 @@ func SignUp(
 ) (*sqlc.CreateUserRow, error) {
 	hashedPassword, err := hashPassword(password)
 	if err != nil {
-		return nil, errors.NewInternalServiceError(err, zerolog.ErrorLevel)
+		return nil, customerr.NewInternalServiceError(err, zerolog.ErrorLevel)
 	}
 
 	createUserArg := sqlc.CreateUserParams{
@@ -37,12 +39,12 @@ func SignUp(
 		pgerr, ok := err.(*pgconn.PgError)
 		if ok && pgerr.Code == db.UniqueViolation {
 			if pgerr.ConstraintName == "users_username_key" {
-				return nil, errors.NewExistingUsernameError()
+				return nil, customerr.NewExistingUsernameError()
 			} else if pgerr.ConstraintName == "users_email_key" {
-				return nil, errors.NewExistingEmailError()
+				return nil, customerr.NewExistingEmailError()
 			}
 		}
-		return nil, errors.NewInternalServiceError(err, zerolog.ErrorLevel)
+		return nil, customerr.NewInternalServiceError(err, zerolog.ErrorLevel)
 	}
 
 	return &newUser, nil
@@ -50,13 +52,16 @@ func SignUp(
 
 func LogIn(server server.Server, email string, password string) (*sqlc.GetUserByEmailRow, error) {
 	user, err := server.DbStore.GetUserByEmail(context.Background(), email)
+
 	if err != nil {
-		return nil, errors.NewInternalServiceError(err, zerolog.ErrorLevel)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, customerr.NewEmailNotFoundError()
+		}
+		return nil, customerr.NewInternalServiceError(err, zerolog.ErrorLevel)
 	}
-	// TODO need to check if nil is returned when the user does not exist or if pgx error is returned
 
 	if !isPasswordEqualToHashedPassword(password, user.Password) {
-		return nil, errors.NewInvalidCredentialsError()
+		return nil, customerr.NewInvalidCredentialsError()
 	}
 
 	return &user, nil

@@ -5,29 +5,28 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 
-	"github.com/M-Xue/go-auth-server/errors"
+	"github.com/M-Xue/go-auth-server/customerr"
 	"github.com/M-Xue/go-auth-server/server"
 	"github.com/M-Xue/go-auth-server/util"
-	goerr "github.com/go-errors/errors"
+	"github.com/go-errors/errors"
 )
 
 func ErrorHandlerMiddleware(logger zerolog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 		for _, err := range c.Errors {
-			e := &errors.ServerError{}
-			if goerr.As(err, e) {
+			e := &customerr.ServerError{}
+			if errors.As(err, e) {
 				util.LogError(c, logger, *e)
 				c.AbortWithStatusJSON(
 					e.GetClientErrorResponse().HttpStatusCode,
 					e.GetClientErrorResponse(),
 				)
 			} else {
-				uncaughtError := errors.NewUncaughtInternalServiceError(err, zerolog.ErrorLevel)
+				uncaughtError := customerr.NewUncaughtInternalServiceError(err, zerolog.ErrorLevel)
 				util.LogError(c, logger, uncaughtError.ServerError)
 				c.AbortWithStatusJSON(uncaughtError.GetClientErrorResponse().HttpStatusCode, uncaughtError.GetClientErrorResponse())
 			}
-
 		}
 	}
 }
@@ -44,7 +43,7 @@ func AuthenticationMiddleware(server server.Server) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("auth")
 		if err != nil {
-			e := errors.NewMissingAuthTokenError()
+			e := customerr.NewMissingAuthTokenError()
 			c.AbortWithStatusJSON(
 				e.GetClientErrorResponse().HttpStatusCode,
 				e.GetClientErrorResponse(),
@@ -54,7 +53,7 @@ func AuthenticationMiddleware(server server.Server) gin.HandlerFunc {
 
 		payload, err := server.AuthTokenFactory.VerifyAndParseAuthToken(tokenString)
 		if err != nil {
-			e := errors.NewInvalidAuthTokenError()
+			e := customerr.NewInvalidAuthTokenError()
 			c.AbortWithStatusJSON(
 				e.GetClientErrorResponse().HttpStatusCode,
 				e.GetClientErrorResponse(),

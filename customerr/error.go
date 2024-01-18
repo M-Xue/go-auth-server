@@ -1,4 +1,4 @@
-package errors
+package customerr
 
 import (
 	goerr "github.com/go-errors/errors"

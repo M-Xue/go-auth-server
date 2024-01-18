@@ -6,31 +6,37 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 
-	"github.com/M-Xue/go-auth-server/errors"
+	"github.com/M-Xue/go-auth-server/customerr"
 )
 
 func LogError(
 	c *gin.Context,
 	logger zerolog.Logger,
-	e errors.ServerError,
+	e customerr.ServerError,
 ) {
-	userIDString := ""
+	var userIDString string
 	userUUID, err := GetUserUUIDFromGinContext(c)
 	if err != nil {
+		userIDString = ""
+	} else {
 		userIDString = userUUID.String()
 	}
 
-	requestIDString := ""
+	var requestIDString string
 	requestUUID, err := GetRequestUUIDFromGinContext(c)
 	if err != nil {
+		requestIDString = ""
+	} else {
 		requestIDString = requestUUID.String()
 	}
 
 	requestInfo := GetRequestInfoFromGinContext(c)
-	requestInfoString, err := json.Marshal(requestInfo)
+	requestInfoJson, err := json.Marshal(requestInfo)
+	var requestInfoString string
 	if err != nil {
-		// TODO
-		return
+		requestInfoString = ""
+	} else {
+		requestInfoString = string(requestInfoJson)
 	}
 
 	logger.
@@ -38,8 +44,8 @@ func LogError(
 		Str("debug_id", e.DebugId.String()).
 		Str("user_id", userIDString).
 		Str("request_id", requestIDString).
-		Str("request_info", string(requestInfoString)).
+		Str("request_info", requestInfoString).
 		Err(e).
-		Str("stack_trace", string(e.Stack())).
+		Str("stack_trace", e.ErrorStack()).
 		Send()
 }

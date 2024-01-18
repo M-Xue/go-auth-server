@@ -1,4 +1,4 @@
-package errors
+package customerr
 
 // TODO make a client error that wraps around all server errors
 

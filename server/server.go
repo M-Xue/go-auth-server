@@ -32,11 +32,17 @@ func InitServer() (Server, error) {
 		return Server{}, err
 	}
 
+	logger, err := initLogger(serverConfig.Environment)
+	if err != nil {
+		return Server{}, err
+	}
+
 	server := Server{
 		DbStore:          dbStore,
 		Router:           gin.Default(),
 		Config:           serverConfig,
 		AuthTokenFactory: tokenFactory,
+		Logger:           logger,
 	}
 
 	return server, nil

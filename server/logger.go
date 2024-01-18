@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/rs/zerolog"
 )
@@ -19,18 +18,10 @@ func initLogger(environment string) (zerolog.Logger, error) {
 			0664,
 		)
 		if err != nil {
-			panic(err)
+			return logger, err
 		}
 
-		consoleWriter := zerolog.ConsoleWriter{
-			Out:        file,
-			TimeFormat: time.RFC3339,
-			FormatMessage: func(i interface{}) string {
-				return fmt.Sprintf("| %s |", i)
-			},
-		}
-
-		logger = zerolog.New(consoleWriter).
+		logger = zerolog.New(file).
 			With().
 			Timestamp().
 			Logger()

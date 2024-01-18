@@ -1,9 +1,9 @@
-package errors
+package customerr
 
 import (
 	"net/http"
 
-	goerr "github.com/go-errors/errors"
+	"github.com/go-errors/errors"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 )
@@ -23,7 +23,7 @@ func NewUserNotFoundError() UserNotFoundError {
 
 	serverErr := ServerError{
 		ErrorMetadata:   errMetadata,
-		StackTraceError: goerr.Errorf("user not found"),
+		StackTraceError: errors.Errorf("user not found"),
 	}
 
 	return UserNotFoundError{serverErr}
@@ -44,10 +44,31 @@ func NewInvalidCredentialsError() InvalidCredentialsError {
 
 	serverErr := ServerError{
 		ErrorMetadata:   errMetadata,
-		StackTraceError: goerr.Errorf("invalid credentials"),
+		StackTraceError: errors.Errorf("invalid credentials"),
 	}
 
 	return InvalidCredentialsError{serverErr}
+}
+
+type EmailNotFoundError struct {
+	ServerError
+}
+
+func NewEmailNotFoundError() EmailNotFoundError {
+	errMetadata := ErrorMetadata{
+		ServerErrorCode: InvalidCredentials,
+		DebugId:         uuid.New(),
+		HttpStatusCode:  http.StatusUnauthorized,
+		ClientMessage:   "Invalid credentials",
+		LogLevel:        zerolog.InfoLevel,
+	}
+
+	serverErr := ServerError{
+		ErrorMetadata:   errMetadata,
+		StackTraceError: errors.Errorf("email not found"),
+	}
+
+	return EmailNotFoundError{serverErr}
 }
 
 type ExistingEmailError struct {
@@ -65,7 +86,7 @@ func NewExistingEmailError() ExistingEmailError {
 
 	serverErr := ServerError{
 		ErrorMetadata:   errMetadata,
-		StackTraceError: goerr.Errorf("email already exists"),
+		StackTraceError: errors.Errorf("email already exists"),
 	}
 
 	return ExistingEmailError{serverErr}
@@ -86,7 +107,7 @@ func NewExistingUsernameError() ExistingUsernameError {
 
 	serverErr := ServerError{
 		ErrorMetadata:   errMetadata,
-		StackTraceError: goerr.Errorf("username already exists"),
+		StackTraceError: errors.Errorf("username already exists"),
 	}
 
 	return ExistingUsernameError{serverErr}

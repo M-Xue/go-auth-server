@@ -99,7 +99,6 @@ func handleUserLogIn(server server.Server) gin.HandlerFunc {
 
 		err = setAuthTokenCookie(ctx, server, loggedInUser.ID)
 		if err != nil {
-			// TODO fix if this error is the correct way to throw this err
 			ctx.Error(err)
 			return
 		}
